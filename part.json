@@ -1,0 +1,11 @@
+{
+	"priority": 999,
+	"dependencies": {
+		"express-session": "*",
+		"express": "*"
+	},
+	"router": [{
+		"name": "Start",
+		"src": "index.js"
+	}]
+}
