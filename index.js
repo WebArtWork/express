@@ -1,33 +1,42 @@
-console.log('EXPRESS LOADED');
-var session = require('express-session');
-var express = require('express');
-var app = express();
+const express = require('express');
+const app = express();
+const server = require('http').Server(app);
+const favicon = require('serve-favicon');
+const cookieParser = require('cookie-parser');
+const methodOverride = require('method-override');
+const bodyParser = require('body-parser');
 module.exports = function(sd){
-	console.log('called');
-	var sessionMaxAge = 365 * 24 * 60 * 60 * 1000;
-	if(typeof sd.config.session == 'number'){
-		sessionMaxAge = sd.config.session;
-	}
-	app.use(session({
-		key: 'express.sid.'+sd.config.prefix,
-		secret: 'thisIsCoolSecretFromWaWFramework'+sd.config.prefix,
-		resave: false,
-		saveUninitialized: true,
-		cookie: {
-			maxAge: sessionMaxAge,
-			domain: sd.config.domain||undefined
-		},
-		rolling: true,
-		//store: store
+	sd.app = app;
+	if(sd.config.icon && sd.fs.existsSync(process.cwd() + sd.config.icon))
+		app.use(favicon(process.cwd() + sd.config.icon));
+	app.use(cookieParser());
+	app.use(methodOverride('X-HTTP-Method-Override'));
+	app.use(bodyParser.urlencoded({
+		'extended': 'true',
+		'limit': '50mb'
 	}));
-
+	app.use(bodyParser.json({
+		'limit': '50mb'
+	}));
+	if(!sd.config.port) sd.config.port=8080;
+	server.listen(sd.config.port);
+	console.log("App listening on port " + (sd.config.port));
+	/*
+	*	Helpers
+	*/
 	sd.router = function(api){
 		var router = express.Router();
 		app.use(api, router);
 		return router;
 	}
-	// support old code
+	/*
+	*	Support for 0.x version of waw until 2.0
+	*/
 	sd._initRouter = sd.router;
-	sd.app = app;
 	sd._app = app;
+	sd.next = (req, res, next)=>next()
+	sd.ensure = (req, res, next)=>{
+		if(req.user) next();
+		else res.json(false);
+	}
 }

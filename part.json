@@ -1,7 +1,11 @@
 {
 	"priority": 999,
+	"name": "express",
 	"dependencies": {
-		"express-session": "*",
+		"method-override": "*",
+		"serve-favicon": "*",
+		"cookie-parser": "*",
+		"body-parser": "*",
 		"express": "*"
 	},
 	"router": [{
