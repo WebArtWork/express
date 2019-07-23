@@ -6,7 +6,6 @@ const cookieParser = require('cookie-parser');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 module.exports = function(sd){
-	sd.app = app;
 	if(sd.config.icon && sd.fs.existsSync(process.cwd() + sd.config.icon))
 		app.use(favicon(process.cwd() + sd.config.icon));
 	app.use(cookieParser());
@@ -29,6 +28,11 @@ module.exports = function(sd){
 		app.use(api, router);
 		return router;
 	}
+	sd.app = app;
+	sd.server = server;
+	sd.cookieParser = cookieParser;
+	sd.methodOverride = methodOverride;
+	sd.bodyParser = bodyParser;
 	/*
 	*	Support for 0.x version of waw until 2.0
 	*/
