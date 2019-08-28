@@ -43,4 +43,7 @@ module.exports = function(sd){
 		if(req.user) next();
 		else res.json(false);
 	}
+	sd._middleware = [];
+	sd._ensure = sd.ensure;
+	sd._config = sd.config;
 }
